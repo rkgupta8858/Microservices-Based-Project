@@ -1,0 +1,5 @@
+package com.ecom.payment.exception;
+
+public class ErrorResponse {
+
+}

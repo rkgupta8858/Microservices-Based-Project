@@ -1,0 +1,9 @@
+package com.ecom.order.exception;
+
+public class ProductOutOfStockException extends RuntimeException {
+	public public ProductOutOfStockException() {
+		// TODO Auto-generated constructor stub
+	}(String message) {
+		super(message);
+	}
+}

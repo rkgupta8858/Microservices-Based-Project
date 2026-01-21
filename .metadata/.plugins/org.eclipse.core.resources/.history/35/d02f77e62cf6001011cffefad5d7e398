@@ -1,0 +1,198 @@
+package com.ecom.order.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ecom.order.client.InventoryClient;
+import com.ecom.order.client.InventoryResponse;
+import com.ecom.order.client.PaymentClient;
+import com.ecom.order.client.PaymentRequest;
+import com.ecom.order.client.PaymentResponse;
+import com.ecom.order.dto.OrderItemRequest;
+import com.ecom.order.dto.OrderRequest;
+import com.ecom.order.dto.OrderResponse;
+import com.ecom.order.entity.Order;
+import com.ecom.order.entity.OrderItem;
+import com.ecom.order.exception.OrderNotFoundException;
+import com.ecom.order.exception.ProductOutOfStockException;
+import com.ecom.order.repository.OrderItemRepository;
+import com.ecom.order.repository.OrderRepository;
+
+@Service
+public class OrderService {
+
+	@Autowired
+	private OrderRepository orderRepository;
+
+	@Autowired
+	private OrderItemRepository orderItemRepository;
+
+	@Autowired
+	private InventoryClient inventoryClient;
+
+	@Autowired
+	private PaymentClient paymentClient;
+
+//	@Autowired
+//	private OrderProducer orderProducer;
+
+	public OrderResponse createOrder(OrderRequest request) {
+
+		Order order = new Order();
+		order.setUserId(request.getUserId());
+		order.setStatus("CREATED");
+		double total = 0;
+		List<OrderItem> items = new ArrayList<>();
+
+		for (OrderItemRequest itemReq : request.getItems()) {
+			InventoryResponse stock = inventoryClient.checkStock(itemReq.getProductId());
+			if (!stock.isInStock()) {
+				throw new ProductOutOfStockException("Product out of stock: " + itemReq.getProductId());
+			}
+
+			OrderItem item = new OrderItem();
+			item.setProductId(itemReq.getProductId());
+			item.setQuantity(itemReq.getQuantity());
+			item.setPrice(itemReq.getPrice());
+			item.setOrder(order);
+
+			items.add(item);
+			total += itemReq.getPrice() * itemReq.getQuantity();
+		}
+
+		order.setTotalAmount(total);
+		order.setItems(items);
+
+		Order savedOrder = orderRepository.save(order);
+
+		PaymentResponse payment = paymentClient.makePayment(new PaymentRequest(savedOrder.getId(), total));
+
+		if ("SUCCESS".equals(payment.getStatus())) {
+			savedOrder.setStatus("PAID");
+		} else {
+			savedOrder.setStatus("FAILED");
+		}
+
+		orderRepository.save(savedOrder);
+
+		orderProducer.sendOrderCreated(savedOrder.getId());
+
+		return new OrderResponse(savedOrder.getId(), savedOrder.getStatus());
+	}
+
+	public Order getOrderById(int id) {
+		return orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order not found: " + id));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//package com.ecom.order.service;
+//
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//import com.ecom.order.dto.OrderItemRequest;
+//import com.ecom.order.dto.OrderRequest;
+//import com.ecom.order.dto.OrderResponse;
+//import com.ecom.order.entity.Order;
+//import com.ecom.order.entity.OrderItem;
+//import com.ecom.order.exception.OrderNotFoundException;
+//import com.ecom.order.repository.OrderItemRepository;
+//import com.ecom.order.repository.OrderRepository;
+//
+//@Service
+//public class OrderService {
+//
+//	@Autowired
+//	private OrderRepository orderRepository;
+//
+//	@Autowired
+//	private OrderItemRepository orderItemRepository;
+//
+//	public OrderResponse createOrder(OrderRequest request) {
+//
+//		Order order = new Order();
+//		order.setUserId(request.getUserId());
+//		order.setStatus("CREATED");
+//
+//		double total = 0;
+//		List<OrderItem> items = new ArrayList<>();
+//
+//		for (OrderItemRequest itemReq : request.getItems()) {
+//
+//			// 🔹 MOCK INVENTORY CHECK (Always true for testing)
+//			boolean inStock = true;   // <---- No external call
+//
+//			if (!inStock) {
+//				throw new RuntimeException("Product out of stock: " + itemReq.getProductId());
+//			}
+//
+//			OrderItem item = new OrderItem();
+//			item.setProductId(itemReq.getProductId());
+//			item.setQuantity(itemReq.getQuantity());
+//			item.setPrice(itemReq.getPrice());
+//			item.setOrder(order);
+//
+//			items.add(item);
+//			total += itemReq.getPrice() * itemReq.getQuantity();
+//		}
+//
+//		order.setTotalAmount(total);
+//		order.setItems(items);
+//
+//		Order savedOrder = orderRepository.save(order);
+//
+//		// 🔹 MOCK PAYMENT (Always SUCCESS for testing)
+//		String paymentStatus = "SUCCESS";   // <---- No external call
+//
+//		if ("SUCCESS".equals(paymentStatus)) {
+//			savedOrder.setStatus("PAID");
+//		} else {
+//			savedOrder.setStatus("FAILED");
+//		}
+//
+//		orderRepository.save(savedOrder);
+//
+//		return new OrderResponse(savedOrder.getId(), savedOrder.getStatus());
+//	}
+//
+//	public Order getOrderById(int id) {
+//		return orderRepository.findById(id)
+//				.orElseThrow(() -> new OrderNotFoundException("Order not found: " + id));
+//	}
+//}

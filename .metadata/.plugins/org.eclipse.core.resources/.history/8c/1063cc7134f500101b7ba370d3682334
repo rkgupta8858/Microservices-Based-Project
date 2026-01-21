@@ -1,0 +1,23 @@
+package com.ecom.user.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ecom.user.entity.User;
+import com.ecom.user.exception.UserNotFoundException;
+import com.ecom.user.repository.UserRepository;
+
+@Service
+public class UserService {
+	@Autowired
+	private UserRepository repository;
+
+	public User createUser(User user) {
+		return repository.save(user);
+	}
+
+	
+	public User getUserById(int id) {
+		return repository.findById(id).orElseThrow(()->new UserNotFoundException("User not found with id: " + id)));
+	}
+}

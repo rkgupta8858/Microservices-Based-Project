@@ -1,0 +1,5 @@
+package com.ecom.inventory.repository;
+
+public interface InventoryRepository {
+
+}

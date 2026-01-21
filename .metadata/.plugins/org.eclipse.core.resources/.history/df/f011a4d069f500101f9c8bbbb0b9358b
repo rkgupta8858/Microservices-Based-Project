@@ -1,0 +1,49 @@
+package com.ecom.inventory.service;
+
+import org.springframework.stereotype.Service;
+
+import com.ecom.inventory.entity.Inventory;
+import com.ecom.inventory.exception.InventoryNotFoundException;
+import com.ecom.inventory.repository.InventoryRepository;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+@Service
+public class InventoryService {
+
+	private final InventoryRepository inventoryRepository;
+
+	public InventoryService(InventoryRepository inventoryRepository) {
+		this.inventoryRepository = inventoryRepository;
+	}
+
+	@CircuitBreaker(name = "inventoryService", fallbackMethod = "fallbackGetInventory")
+	public Inventory getInventoryByProductId(int productId) {
+
+		return inventoryRepository.findByProductId(productId)
+				.orElseThrow(() -> new InventoryNotFoundException("Inventory not found for productId: " + productId));
+	}
+
+	@Retry(name = "inventoryService")
+	@Transactional
+	public Inventory reduceStock(int productId, int quantity) {
+
+		Inventory inventory = inventoryRepository.findByProductId(productId)
+				.orElseThrow(() -> new InventoryNotFoundException("Inventory not found for productId: " + productId));
+
+		if (inventory.getQuantity() < quantity) {
+			throw new InsufficientStockException("Insufficient stock for productId: " + productId);
+		}
+
+		inventory.setQuantity(inventory.getQuantity() - quantity);
+		return inventoryRepository.save(inventory);
+	}
+
+	// Fallback for Circuit Breaker
+	public Inventory fallbackGetInventory(int productId, Throwable t) {
+		Inventory fallback = new Inventory();
+		fallback.setProductId(productId);
+		fallback.setQuantity(0);
+		return fallback;
+	}
+}

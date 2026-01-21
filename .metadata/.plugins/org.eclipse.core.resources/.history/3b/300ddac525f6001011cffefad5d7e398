@@ -1,0 +1,5 @@
+package com.ecom.payment.controller;
+
+public class PaymentController {
+
+}

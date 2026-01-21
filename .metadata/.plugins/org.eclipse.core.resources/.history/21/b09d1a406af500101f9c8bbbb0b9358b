@@ -1,0 +1,26 @@
+package com.ecom.inventory.controller;
+
+@RestController
+@RequestMapping("/inventory")
+public class InventoryController {
+
+    private final InventoryService inventoryService;
+
+    public InventoryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
+
+    // GET /inventory/{productId}
+    @GetMapping("/{productId}")
+    public ResponseEntity<Inventory> getInventory(@PathVariable int productId) {
+        return ResponseEntity.ok(inventoryService.getInventoryByProductId(productId));
+    }
+
+    // PUT /inventory/reduce
+    @PutMapping("/reduce")
+    public ResponseEntity<Inventory> reduceStock(@RequestBody ReduceStockRequest request) {
+        return ResponseEntity.ok(
+                inventoryService.reduceStock(request.getProductId(), request.getQuantity())
+        );
+    }
+}

@@ -1,0 +1,5 @@
+package com.ecom.cart.exception;
+
+public class CartNotFoundException {
+
+}

@@ -1,0 +1,98 @@
+package com.ecom.payment.service;
+
+import com.ecom.payment.dto.PaymentRequest;
+import com.ecom.payment.dto.PaymentResponse;
+import com.ecom.payment.entity.Payment;
+import com.ecom.payment.exception.PaymentFailedException;
+import com.ecom.payment.repository.PaymentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentService {
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    public PaymentResponse processPayment(PaymentRequest request) {
+
+        Payment payment = new Payment();
+        payment.setOrderId(request.getOrderId());
+        payment.setAmount(request.getAmount());
+
+        // Simulating payment logic
+        boolean paymentSuccess = request.getAmount() > 0;
+
+        if (paymentSuccess) {
+            payment.setStatus("SUCCESS");
+            paymentRepository.save(payment);
+            return new PaymentResponse("SUCCESS");
+        } else {
+            payment.setStatus("FAILED");
+            paymentRepository.save(payment);
+            throw new PaymentFailedException(
+                    "Payment failed for order: " + request.getOrderId()
+            );
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//package com.ecom.payment.service;
+//
+//import com.ecom.payment.dto.PaymentRequest;
+//import com.ecom.payment.dto.PaymentResponse;
+//import com.ecom.payment.entity.Payment;
+//import com.ecom.payment.exception.PaymentFailedException;
+//import com.ecom.payment.kafka.PaymentProducer;
+//import com.ecom.payment.repository.PaymentRepository;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//@Service
+//public class PaymentService {
+//
+//    @Autowired
+//    private PaymentRepository paymentRepository;
+//
+//    @Autowired
+//    private PaymentProducer paymentProducer;
+//
+//    public PaymentResponse processPayment(PaymentRequest request) {
+//
+//        Payment payment = new Payment();
+//        payment.setOrderId(request.getOrderId());
+//        payment.setAmount(request.getAmount());
+//
+//        // Simulating payment logic
+//        boolean paymentSuccess = request.getAmount() > 0;
+//
+//        if (paymentSuccess) {
+//            payment.setStatus("SUCCESS");
+//            paymentRepository.save(payment);
+//            paymentProducer.sendPaymentSuccess(request.getOrderId());
+//            return new PaymentResponse("SUCCESS");
+//        } else {
+//            payment.setStatus("FAILED");
+//            paymentRepository.save(payment);
+//            paymentProducer.sendPaymentFailed(request.getOrderId());
+//            throw new PaymentFailedException("Payment failed for order: " + request.getOrderId());
+//        }
+//    }
+//}

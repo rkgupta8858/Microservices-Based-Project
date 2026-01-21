@@ -1,0 +1,9 @@
+package com.ecom.order.client;
+
+@FeignClient(name = "payment-service", url = "http://localhost:8086")
+public interface PaymentClient {
+
+    @PostMapping("/payments")
+    PaymentResponse makePayment(@RequestBody PaymentRequest request);
+}
+

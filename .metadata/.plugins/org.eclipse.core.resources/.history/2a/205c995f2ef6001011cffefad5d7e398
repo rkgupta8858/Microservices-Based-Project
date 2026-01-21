@@ -1,0 +1,20 @@
+package com.ecom.payment.kafka;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentProducer {
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    public void sendPaymentSuccess(int orderId) {
+        kafkaTemplate.send("PAYMENT_SUCCESS", "Payment successful for order: " + orderId);
+    }
+
+    public void sendPaymentFailed(int orderId) {
+        kafkaTemplate.send("PAYMENT_FAILED", "Payment failed for order: " + orderId);
+    }
+}

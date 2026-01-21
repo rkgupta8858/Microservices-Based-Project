@@ -1,0 +1,22 @@
+package com.ecom.order.client;
+
+public class InventoryResponse {
+	private int productId;
+	private boolean inStock;
+
+	public int getProductId() {
+		return productId;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public void setInStock(Boolean inStock) {
+		this.inStock = inStock;
+	}
+
+	public boolean isInStock() {
+		return inStock;
+	}
+}

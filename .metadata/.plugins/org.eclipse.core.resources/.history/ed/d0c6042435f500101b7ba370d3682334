@@ -1,0 +1,8 @@
+package com.ecom.user.controller;
+
+import com.ecom.user.service.UserService;
+
+public class UserController {
+		
+	private UserService service;
+}

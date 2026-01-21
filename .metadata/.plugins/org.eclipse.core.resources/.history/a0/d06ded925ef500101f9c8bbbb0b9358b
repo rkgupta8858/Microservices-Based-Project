@@ -1,0 +1,12 @@
+package com.ecom.product.service;
+
+import org.springframework.stereotype.Service;
+
+import com.ecom.product.repository.ProductRepository;
+
+@Service
+public class ProductService {
+		
+	private ProductRepository repository;
+	
+}

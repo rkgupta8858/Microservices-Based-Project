@@ -1,0 +1,4 @@
+package com.ecom.user.repository;
+
+public interface RoleRepository extends JpaRepository<Role, Long> {
+}

@@ -1,0 +1,6 @@
+package com.ecom.order.dto;
+
+public class OrderRequest {
+	private int userId;
+    private List<OrderItemRequest> items;
+}

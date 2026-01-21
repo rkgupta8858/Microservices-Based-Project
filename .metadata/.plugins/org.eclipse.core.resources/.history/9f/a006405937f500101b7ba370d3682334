@@ -1,0 +1,22 @@
+package com.ecom.user.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.ecom.user.entity.User;
+import com.ecom.user.service.UserService;
+
+public class UserController {
+
+	private UserService service;
+
+	public ResponseEntity<User> createUser(@RequestBody User user) {
+		return new ResponseEntity<>(service.createUser(user), HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<User> getUser(@PathVariable int id) {
+		return ResponseEntity.ok(service.getUserById(id));
+	}
+}

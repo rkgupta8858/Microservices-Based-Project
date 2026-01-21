@@ -1,0 +1,5 @@
+package com.ecom.payment.kafka;
+
+public class PaymentProducer {
+
+}

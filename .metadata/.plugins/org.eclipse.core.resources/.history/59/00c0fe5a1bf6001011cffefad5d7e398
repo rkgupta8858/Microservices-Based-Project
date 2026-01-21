@@ -1,0 +1,8 @@
+package com.ecom.order.client;
+
+@FeignClient(name = "inventory-service", url = "http://localhost:8083")
+public interface InventoryClient {
+
+	@GetMapping("/inventory/{productId}")
+	InventoryResponse checkStock(@PathVariable int productId);
+}

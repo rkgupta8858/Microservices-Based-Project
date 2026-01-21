@@ -1,0 +1,32 @@
+package com.ecom.inventory.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ecom.inventory.entity.Inventory;
+import com.ecom.inventory.service.InventoryService;
+
+@RestController
+public class InventoryController {
+
+	@Autowired
+	private InventoryService inventoryService;
+
+	// GET /inventory/{productId}
+	@GetMapping("inventory/{productId}")
+	public ResponseEntity<Inventory> getInventory(@PathVariable int productId) {
+		return ResponseEntity.ok(inventoryService.getInventoryByProductId(productId));
+	}
+
+	// PUT /inventory/reduce
+	@PutMapping("/reduce")
+	public ResponseEntity<Inventory> reduceStock(@RequestBody ReduceStockRequest request) {
+		return ResponseEntity.ok(inventoryService.reduceStock(request.getProductId(), request.getQuantity()));
+	}
+}

@@ -1,0 +1,20 @@
+package com.ecom.order.controller;
+
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderResponse createOrder(@RequestBody OrderRequest request) {
+        return orderService.createOrder(request);
+    }
+
+    @GetMapping("/{id}")
+    public Order getOrder(@PathVariable int id) {
+        return orderService.getOrderById(id);
+    }
+}

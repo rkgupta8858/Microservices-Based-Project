@@ -1,0 +1,14 @@
+package com.ecom.inventory.dto;
+
+public class InventoryResponse {
+
+    private int productId;
+    private int inStock;
+
+    public InventoryResponse(int productId, int i) {
+        this.productId = productId;
+        this.inStock = i;
+    }
+
+  
+}

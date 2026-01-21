@@ -1,0 +1,10 @@
+package com.ecom.order.kafka;
+
+/*
+ * @Service public class OrderProducer {
+ * 
+ * @Autowired private KafkaTemplate<String, String> kafkaTemplate;
+ * 
+ * public void sendOrderCreated(int orderId) {
+ * kafkaTemplate.send("ORDER_CREATED", "Order Created: " + orderId); } }
+ */

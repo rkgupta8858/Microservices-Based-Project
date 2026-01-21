@@ -1,0 +1,7 @@
+package com.ecom.order.exception;
+
+public class ProductOutOfStockException extends RuntimeException {
+	public ProductOutOfStock(String message) {
+		super(message);
+	}
+}

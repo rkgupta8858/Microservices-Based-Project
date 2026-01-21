@@ -1,0 +1,50 @@
+package com.ecom.cart.service;
+
+import com.ecom.cart.dto.CartRequest;
+import com.ecom.cart.entity.Cart;
+import com.ecom.cart.entity.CartItem;
+import com.ecom.cart.exception.CartItemNotFoundException;
+import com.ecom.cart.repository.CartItemRepository;
+import com.ecom.cart.repository.CartRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CartService {
+
+	@Autowired
+	private CartRepository cartRepository;
+
+	@Autowired
+	private CartItemRepository cartItemRepository;
+
+	public Cart addToCart(CartRequest request) {
+
+		Cart cart = cartRepository.findByUserId(request.getUserId()).orElseGet(() -> {
+			Cart newCart = new Cart();
+			newCart.setUserId(request.getUserId());
+			return cartRepository.save(newCart);
+		});
+
+		CartItem item = new CartItem();
+		item.setProductId(request.getProductId());
+		item.setQuantity(request.getQuantity());
+		item.setCart(cart);
+
+		CartItem savedItem = cartItemRepository.save(item);
+
+		cart.setItems(List.of(savedItem));
+
+		return cart;
+	}
+
+	public void removeFromCart(int cartItemId) {
+
+		CartItem item = cartItemRepository.findById(cartItemId)
+				.orElseThrow(() -> new CartItemNotFoundException("Cart item not found with id: " + cartItemId));
+
+		cartItemRepository.delete(item);
+	}
+}

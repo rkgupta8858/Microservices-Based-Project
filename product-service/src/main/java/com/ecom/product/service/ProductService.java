@@ -1,0 +1,47 @@
+package com.ecom.product.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ecom.product.dto.ProductRequest;
+import com.ecom.product.entity.Category;
+import com.ecom.product.entity.Product;
+import com.ecom.product.exception.CategoryNotFoundException;
+import com.ecom.product.exception.ProductNotFoundException;
+import com.ecom.product.repository.CategoryRepository;
+import com.ecom.product.repository.ProductRepository;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+
+    public Category createCategory(Category category) {
+        return categoryRepository.save(category);
+    }
+
+ 
+    public Product createProduct(ProductRequest request) {
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found.."));
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+        product.setCategory(category);
+
+        return productRepository.save(product);
+    }
+
+    public Product getProductById(int id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+    }
+}

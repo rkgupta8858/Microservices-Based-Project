@@ -1,0 +1,8 @@
+package com.ecom.user.service;
+
+import jakarta.websocket.server.ServerEndpoint;
+
+@ServerEndpoint
+public class UserService {
+
+}

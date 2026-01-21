@@ -1,0 +1,5 @@
+package com.ecom.order.client;
+
+public class PaymentRequest {
+
+}

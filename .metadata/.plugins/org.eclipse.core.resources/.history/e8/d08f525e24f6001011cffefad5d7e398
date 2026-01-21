@@ -1,0 +1,15 @@
+package com.ecom.payment.dto;
+
+public class PaymentRequest {
+
+    private int orderId;
+    private double amount;
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+}

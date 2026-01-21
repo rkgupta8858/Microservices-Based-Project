@@ -1,0 +1,20 @@
+package com.ecom.payment.controller;
+
+import com.ecom.payment.dto.PaymentRequest;
+import com.ecom.payment.dto.PaymentResponse;
+import com.ecom.payment.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class PaymentController {
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @PostMapping("/makePayment")
+    public PaymentResponse makePayment(@RequestBody PaymentRequest request) {
+        return paymentService.processPayment(request);
+    }
+}
