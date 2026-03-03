@@ -2,7 +2,7 @@ server:
   port: 8088
 spring:
   application:
-    name: api-gateway
+    name: api-gateway-service
   profiles:
     active: dev
   config:
