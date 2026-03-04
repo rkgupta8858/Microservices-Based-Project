@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecom.user.dto.UserRequest;
@@ -14,6 +15,7 @@ import com.ecom.user.entity.User;
 import com.ecom.user.service.UserService;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
@@ -24,7 +26,7 @@ public class UserController {
 		return new ResponseEntity<>(service.createUser(request), HttpStatus.CREATED);
 	}
 
-	@GetMapping("/user/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<User> getUser(@PathVariable int id) {
 		return ResponseEntity.ok(service.getUserById(id));
 	}
